@@ -30,12 +30,12 @@ def newweights():
     w1=xavier_init(16, 16)
     w2=xavier_init(16, 16)
     w3=xavier_init(16, 16)
-    w4=xavier_init(16, 1)
+    w4=xavier_init(16, 2)
     b0=np.ones(16)*0.01
     b1=np.ones(16)*0.01
     b2=np.ones(16)*0.01
     b3=np.ones(16)*0.01
-    b4=np.ones(1)*0.01
+    b4=np.ones(2)*0.01
     np.save('weights-and-biases/w0.npy', w0)
     np.save('weights-and-biases/w1.npy', w1)
     np.save('weights-and-biases/w2.npy', w2)
