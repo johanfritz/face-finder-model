@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import random
 
 
 leaky_relu_constant=0
@@ -16,7 +18,9 @@ def relu_scalar_prime(n):
         return leaky_relu_constant
 
 relu=np.vectorize(relu_scalar)
-reluPprime=np.vectorize(relu_scalar_prime)
+reluPrime=np.vectorize(relu_scalar_prime)
+
+normalize=lambda x: x/256
 
 sigmoid=lambda x: 1/(1+np.exp(-x))
 sigmoidPrime=lambda x: np.exp(-x)/((1+np.exp(-x))**2)
@@ -26,15 +30,15 @@ def xavier_init(n_in, n_out):
     return np.random.normal(0, xavier_stddev, (n_out, n_in))
 
 def newweights():
-    w0=xavier_init(45*45, 16)
-    w1=xavier_init(16, 16)
+    w0=xavier_init(175*150, 32)
+    w1=xavier_init(32, 16)
     w2=xavier_init(16, 16)
-    w3=xavier_init(16, 16)
-    w4=xavier_init(16, 2)
-    b0=np.ones(16)*0.01
+    w3=xavier_init(16, 8)
+    w4=xavier_init(8, 2)
+    b0=np.ones(32)*0.01
     b1=np.ones(16)*0.01
     b2=np.ones(16)*0.01
-    b3=np.ones(16)*0.01
+    b3=np.ones(8)*0.01
     b4=np.ones(2)*0.01
     np.save('weights-and-biases/w0.npy', w0)
     np.save('weights-and-biases/w1.npy', w1)
