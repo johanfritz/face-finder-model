@@ -59,27 +59,27 @@ class Face_classification_model:
         z5prime=sigmoidPrime(z5)
         delta1=a5-cv
         delta1*=2*z5prime #delta1: gradb4
-        delta2=delta1.reshape(np.shape(self.b4))*a4 #delta2: gradw4
+        delta2=delta1.reshape((np.shape(self.b4)[0], 1))*a4 #delta2: gradw4
         delta3=np.dot(self.w4.T, delta1)*z4prime #delta3: gradb3
-        delta4=delta3.reshape(np.shape(self.b3))*a3 #delta4: gradw3
+        delta4=delta3.reshape((np.shape(self.b3)[0], 1))*a3 #delta4: gradw3
         delta5=np.dot(self.w3.T, delta3)*z3prime #delta5: gradb2
-        delta6=delta5.reshape(np.shape(self.b2))*a2 #delta6: gradw2
+        delta6=delta5.reshape((np.shape(self.b2)[0], 1))*a2 #delta6: gradw2
         delta7=np.dot(self.w2.T, delta5)*z2prime #delta7: gradb1
-        delta8=delta7.reshape(np.shape(self.b1))*a1 #delta8: gradw1
+        delta8=delta7.reshape((np.shape(self.b1)[0], 1))*a1 #delta8: gradw1
         delta9=np.dot(self.w1.T, delta7)*z1prime
-        delta10=delta9.reshape(np.shape(self.b0))*image
-        self.gw0+=delta10*learningrate
-        self.gw1+=delta8*learningrate
-        self.gw2+=delta6*learningrate
-        self.gw3+=delta4*learningrate
-        self.gw4+=delta2*learningrate
-        self.gb0+=delta9*learningrate
-        self.gb1+=delta7*learningrate
-        self.gb2+=delta5*learningrate
-        self.gb3+=delta3*learningrate
-        self.gb4+=delta1*learningrate
+        delta10=delta9.reshape((np.shape(self.b0)[0], 1))*image
+        self.gradientw0+=delta10*learningrate
+        self.gradientw1+=delta8*learningrate
+        self.gradientw2+=delta6*learningrate
+        self.gradientw3+=delta4*learningrate
+        self.gradientw4+=delta2*learningrate
+        self.gradientb0+=delta9*learningrate
+        self.gradientb1+=delta7*learningrate
+        self.gradientb2+=delta5*learningrate
+        self.gradientb3+=delta3*learningrate
+        self.gradientb4+=delta1*learningrate
         self.iterations+=1
-        return None
+        return np.linalg.norm(a5-cv)
     def activations(self, image):
         #image=cv2.Canny(image, 350, 250, 80)
         if np.ndim(image)!=1:
