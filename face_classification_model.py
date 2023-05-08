@@ -81,7 +81,8 @@ class Face_classification_model:
         self.iterations+=1
         return np.linalg.norm(a5-cv)
     def activations(self, image):
-        #image=cv2.Canny(image, 350, 250, 80)
+        if np.shape(image)[0]!=175 or np.shape(image)[1]!=150:
+            image=self.resize(image)
         if np.ndim(image)!=1:
             image=image.reshape((175*150))
         if np.amax(image)>2:
@@ -97,3 +98,7 @@ class Face_classification_model:
         z5=np.matmul(self.w4,a4)+self.b4
         a5=sigmoid(z5)
         return image, a1, a2, a3, a4, a5, z1, z2, z3, z4, z5
+    def resize(self, image):
+        image=Image.fromarray(image)
+        image=image.resize((175, 150))
+        return np.asarray(image)

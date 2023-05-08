@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+from PIL import Image
 
 
 leaky_relu_constant=0
