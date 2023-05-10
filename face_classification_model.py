@@ -34,6 +34,7 @@ class Face_classification_model:
         np.save('weights-and-biases/b2.npy', self.b2)
         np.save('weights-and-biases/b3.npy', self.b3)
         np.save('weights-and-biases/b4.npy', self.b4)
+        print('saved weights to disk')
     def update(self):
         if self.iterations!=0:
             self.w0-=self.gradientw0/self.iterations
