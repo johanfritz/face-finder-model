@@ -2,3 +2,5 @@ LFW.npy
 scripts.py
 /__pycache__/
 not_faces.npy
+not_faces2.npy
+not_faces3.npy

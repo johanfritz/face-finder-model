@@ -52,6 +52,8 @@ class Face_classification_model:
         image, a1, a2, a3, a4, a5, z1, z2, z3, z4, z5=self.activations(image)
         if face:
             cv[0]=1
+        if not face:
+            cv[1]=1
         z1prime=reluPrime(z1)
         z2prime=reluPrime(z2)
         z3prime=reluPrime(z3)
@@ -79,7 +81,7 @@ class Face_classification_model:
         self.gradientb3+=delta3*learningrate
         self.gradientb4+=delta1*learningrate
         self.iterations+=1
-        return np.linalg.norm(a5-cv)
+        return np.linalg.norm(delta1), np.argmax(a5)
     def activations(self, image):
         if np.shape(image)[0]!=175 or np.shape(image)[1]!=150:
             image=self.resize(image)
@@ -100,5 +102,5 @@ class Face_classification_model:
         return image, a1, a2, a3, a4, a5, z1, z2, z3, z4, z5
     def resize(self, image):
         image=Image.fromarray(image)
-        image=image.resize((175, 150))
+        image=image.resize((150, 175))
         return np.asarray(image)
