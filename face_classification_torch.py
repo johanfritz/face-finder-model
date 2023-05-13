@@ -4,11 +4,14 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
-epochs=10
-lr=1e-5
-save=True
-test=True
+epochs=5
+lr=1e-3
+save=False
+test=False
+training=True
+
 
 class CustomDataset(Dataset):
     def __init__(self, positive_file, negative_file):
@@ -30,21 +33,21 @@ class CustomDataset(Dataset):
 dataset=CustomDataset('LFW12.npy', 'not_faces02.npy')
 #print(dataset.__getitem__(1))
 #print(dataset[1][0])
-dataloader=DataLoader(dataset, batch_size=50, shuffle=True)
+dataloader=DataLoader(dataset, batch_size=100, shuffle=True)
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(175*150, 32, dtype=torch.float32),
+            nn.Linear(175*150, 64, dtype=torch.float32),
             nn.ReLU(),
-            nn.Linear(32, 32, dtype=torch.float32),
+            nn.Linear(64, 32, dtype=torch.float32),
             nn.ReLU(),
             nn.Linear(32, 16, dtype=torch.float32), 
             nn.ReLU(),
-            nn.Linear(16, 8, dtype=torch.float32),
+            nn.Linear(16, 16, dtype=torch.float32),
             nn.ReLU(),
-            nn.Linear(8, 2, dtype=torch.float32),
+            nn.Linear(16, 2, dtype=torch.float32),
             nn.Sigmoid()
         )
     def forward(self, x):
@@ -78,25 +81,55 @@ def train(dataloader, model, loss_fn, optimizer):
         loss.backward()
         optimizer.step()
 
-        if batch % 100 == 0:
+        if batch % 3 == 0:
             loss, current = loss.item(), (batch + 1) * len(X)
             print(f"loss: {loss:>9f}  [{current:>5d}/{size:>5d}]")
+if training and not test:
+    for k in range(epochs):
+        train(dataloader, model, loss_fn, optimizer)
+    if save:
+        torch.save(model.state_dict(), "model.pth")
 
-# for k in range(epochs):
-#     train(dataloader, model, loss_fn, optimizer)
-# if save:
-#     torch.save(model.state_dict(), "model.pth")
-image=dataset[1][0]
-guess=model.knas(image)
-print(guess)
-correct=0
-tries=4000
-print(torch.argmax(guess))
-plt.imshow(image)
-plt.show()
-for k in range(tries):
-    image=dataset[k][0]
-    guess=model.knas(image)
-    if torch.argmax(guess)==0:
-        correct+=1
-print(correct/tries)
+if test:
+    correct=0
+    tries=6500
+    for k in range(tries):
+        image=dataset[k][0]
+        guess=model.knas(image)
+        if torch.argmax(guess)==1:
+            correct+=1
+    print(correct/tries)
+    correct=0
+    tries2=21500
+    for k in range(tries, tries2):
+        image=dataset[k][0]
+        guess=model.knas(image)
+        if torch.argmax(guess)==0:
+            correct+=1
+    print(correct/(tries2-tries))
+# for k in range(20):
+#     bool=random.randint(0, 1)
+#     if bool==1:
+#         rand=random.randint(0, 7499)
+#         image=dataset[rand][0]
+#         guess=model.knas(image)
+#         label='label: face'
+#         if torch.argmax(guess)==1:
+#             label+='guess: face'
+#         if torch.argmax(guess)==0:
+#             label+=' guess: not face'
+#         plt.imshow(image)
+#         plt.title(label)
+#         plt.show()
+#     if bool==0:
+#         rand=random.randint(7501, 20000)
+#         image=dataset[rand][0]
+#         guess=model.knas(image)
+#         label='label: not face'
+#         if torch.argmax(guess)==0:
+#             label+=' guess: not face'
+#         if torch.argmax(guess)==1:
+#             label+=' guess: face'
+#         plt.imshow(image)
+#         plt.title(label)
+#         plt.show()
