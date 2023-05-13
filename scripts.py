@@ -29,8 +29,8 @@ from face_classification_model import *
 # list=np.array(list)
 # np.save('not_faces3.npy', list)
 
-lr=1e-5
-iterations=10000
+lr=0
+iterations=2000
 batch=50
 ratio=2
 save=True
@@ -45,26 +45,28 @@ tface=0
 cface=0
 tnot=0
 cnot=0
-faces=np.load('LFW.npy')
+faces=np.load('LFW1.npy')
 notfaces=np.load('not_faces.npy')
 for q in range(iterations):
     if q%ratio==0:
         rand=random.randint(0, np.shape(faces)[0]-1)
         image=faces[rand]
-        lossfn, guess=network.descent(image, True, lr)
+        lossfn, guess, delta1=network.descent(image, True, lr)
         loss.append(lossfn)
         tries+=1
         tface+=1
+        print(delta1)
         if guess==0:
             correct+=1
             cface+=1
     if not q%ratio==0:
         rand=random.randint(0, np.shape(notfaces)[0]-1)
         image=notfaces[rand]
-        lossfn, guess=network.descent(image, False, lr)
+        lossfn, guess, delta1=network.descent(image, False, lr)
         loss.append(lossfn)
         tries+=1
         tnot+=1
+        print(delta1)
         if guess==1:
             correct+=1
             cnot+=1

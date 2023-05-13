@@ -31,15 +31,15 @@ def xavier_init(n_in, n_out):
     return np.random.normal(0, xavier_stddev, (n_out, n_in))
 
 def newweights():
-    w0=xavier_init(175*150, 32)
-    w1=xavier_init(32, 32)
-    w2=xavier_init(32, 16)
-    w3=xavier_init(16, 8)
-    w4=xavier_init(8, 2)
-    b0=np.ones(32)*0.01
-    b1=np.ones(32)*0.01
-    b2=np.ones(16)*0.01
-    b3=np.ones(8)*0.01
+    w0=xavier_init(175*150, 16)
+    w1=xavier_init(16, 16)
+    w2=xavier_init(16, 8)
+    w3=xavier_init(8, 4)
+    w4=xavier_init(4, 2)
+    b0=np.ones(16)*0.01
+    b1=np.ones(16)*0.01
+    b2=np.ones(8)*0.01
+    b3=np.ones(4)*0.01
     b4=np.ones(2)*0.01
     np.save('weights-and-biases/w0.npy', w0)
     np.save('weights-and-biases/w1.npy', w1)

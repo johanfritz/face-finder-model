@@ -82,7 +82,7 @@ class Face_classification_model:
         self.gradientb3+=delta3*learningrate
         self.gradientb4+=delta1*learningrate
         self.iterations+=1
-        return np.linalg.norm(delta1), np.argmax(a5)
+        return np.linalg.norm(delta1), np.argmax(a5), delta1
     def activations(self, image):
         if np.shape(image)[0]!=175 or np.shape(image)[1]!=150:
             image=self.resize(image)
@@ -105,3 +105,6 @@ class Face_classification_model:
         image=Image.fromarray(image)
         image=image.resize((150, 175))
         return np.asarray(image)
+    def forward(self, image):
+        image, a1, a2, a3, a4, a5, z1, z2, z3, z4, z5=self.activations(image)
+        return a5
