@@ -6,11 +6,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-epochs=5
-lr=1e-3
+epochs=50
+lr=4e-3
 save=False
 test=False
-training=True
+training=False
 
 
 class CustomDataset(Dataset):
@@ -30,7 +30,7 @@ class CustomDataset(Dataset):
             index -= len(self.positive_data)
             return self.negative_data[index], self.negative_labels[index]
 
-dataset=CustomDataset('LFW12.npy', 'not_faces02.npy')
+dataset=CustomDataset('LFW22.npy', 'not_faces02.npy')
 #print(dataset.__getitem__(1))
 #print(dataset[1][0])
 dataloader=DataLoader(dataset, batch_size=100, shuffle=True)
@@ -92,7 +92,7 @@ if training and not test:
 
 if test:
     correct=0
-    tries=6500
+    tries=13233-6500-300
     for k in range(tries):
         image=dataset[k][0]
         guess=model.knas(image)
@@ -115,7 +115,7 @@ if test:
 #         guess=model.knas(image)
 #         label='label: face'
 #         if torch.argmax(guess)==1:
-#             label+='guess: face'
+#             label+=' guess: face'
 #         if torch.argmax(guess)==0:
 #             label+=' guess: not face'
 #         plt.imshow(image)

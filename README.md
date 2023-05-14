@@ -1,4 +1,8 @@
 # face-finder-model
-This is a deep neural network model for finding faces in images, written in python with the numpy library. The purpose is not to create a model that is better than existing ones but rather for me to develop my skills in deep learning. The first step will be to train a classification for determening wether an image is of a face or not. For this i will be using the LFW dataset. 
-# face classification model
-This is in development
+This is a deep neural network model for finding faces in images, written in python with the numpy and pytorch libraries. The purpose is not to create a model that is better than existing ones but rather for me to develop my skills in deep learning. The first step will be to train a classification for determening wether an image is of a face or not. For this i will be using the LFW dataset. 
+# initial numpy attempt for classification
+My initial idea was to create the model all of my own using the numpy library, but after constructing what I thought was a good model, I ran into issues when training, as it failed to learn properly. After having spent some time troubleshooting, I decided to use the prebuilt pytorch library for deep learning insted. The source code for my own model in numpy is still up, but the weight and biases are not trained at all, only initialized using the Xavier method. 
+# Switching to PyTorch
+After the somewhat failed attempt with numpy, I decided to try using PyTorch instead. I have set up a rather simple model using a few layers. I then started training using the before mentioned LFW dataset, and for the negative data I am mainly using the CIFAR-10 dataset, as well as some other smaller sets that I have found online. The trained model with around 95% accuracy is available in the model.pth file. 
+# The face finder model
+The initial goal was to create a model that could locate faces in an image. Having created a model that can classify faces, the next step naturally is to implement this in a program that can search an image for faces. My first attempt has not been very successfull at this. If that is because the classification model is not good enough or an issue in the implementation, I don't know. I will work on finding the issues and getting the program to work, at least to some extent. 
