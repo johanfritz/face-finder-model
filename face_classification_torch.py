@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import random
 
 epochs=50
-lr=4e-3
+lr=4e-5
 save=False
 test=False
 training=False

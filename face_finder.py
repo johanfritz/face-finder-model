@@ -2,83 +2,72 @@ from face_classification_torch import *
 from PIL import Image
 from face_classification_model import *
 
-def potentialboxes(size, numboxes):
-    xlim=15
-    ylim=15
-    list=[]
-    while len(list)<numboxes:
-        ymax=random.randint(0, size[0])
-        xmax=random.randint(0, size[1])
-        ymin=random.randint(0, size[0])
-        xmin=random.randint(0, size[1])
-        if (xmin+xlim<xmax) and (ymin+ylim<ymax):
-            if not (xmax-xmin)>2*(ymax-ymin):
-                if not (ymax-ymin)>2*(xmax-xmin):
-                    kingen=np.array((xmin, ymin, xmax, ymax))
-                    kingen-=1
-                    list.append(kingen)
-    return np.array(list)
+def extrafunction(n):
+    if n<0:
+        return 0
+    else:
+        return n
+specialrelu=np.vectorize(extrafunction)
 
-def split(array, xmin, ymin, xmax, ymax):
+def slidingboxes(size):
+    list=[]
+    xmax=size[1]
+    ymax=size[0]
+    scale=1
+    x=150*scale
+    y=175*scale
+    xnum=3
+    ynum=3
+    if x>xmax or y>ymax:
+        return np.array(size)
+    while xnum>2 and ynum>2:
+        x=150*scale
+        y=175*scale
+        xnum=xmax//x
+        ynum=ymax//y
+        x=int(xmax/xnum)
+        y=int(ymax/ynum)
+        for k in range(xnum):
+            for m in range(ynum):
+                array=np.array([k*x, m*y, (k+1)*x, (m+1)*y])
+                list.append(array)
+        scale+=1
+    list=np.array(list)
+    list-=1
+    list=specialrelu(list)
+    return list
+
+def split(array, box):
+    xmin, ymin, xmax, ymax=box[0], box[1], box[2], box[3]
     out=array[ymin:ymax, xmin:xmax]
     return out
 
-def markImage(image, bndbox, n=0):
+def markImage(array, bndbox, n=0):
     objects=np.shape(bndbox)[0]
     for k in range(objects):
         xmin, ymin, xmax, ymax= bndbox[k, 0], bndbox[k, 1], bndbox[k, 2], bndbox[k, 3]
-        image[ymin, xmin:xmax]=n
-        image[ymax, xmin:xmax]=n
-        image[ymin:ymax, xmin]=n
-        image[ymin:ymax, xmax]=n
-    return image
+        array[ymin, xmin:xmax]=n
+        array[ymax, xmin:xmax]=n
+        array[ymin:ymax, xmin]=n
+        array[ymin:ymax, xmax]=n
+    return array
 
 model=NeuralNetwork()
 model.load_state_dict(torch.load("model.pth"))
 oldmodel=Face_classification_model()
-list=[]
-# image=Image.open('Dostoevsky_1879.jpg').convert('L')
-# image=np.asarray(image)
-# randboxes=potentialboxes(np.shape(image), 100)
-# print(randboxes)
-# print(np.shape(randboxes))
-# for k in range(np.shape(randboxes)[0]):
-#     potentialface=split(image, randboxes[k, 0], randboxes[k, 1], randboxes[k, 2], randboxes[k, 3])
-#     potentialface=oldmodel.resize(potentialface)
-#     potentialface=torch.from_numpy(potentialface).type(torch.float32)
-#     guess=model.knas(potentialface)
-#     if guess[0]>guess[1]+0.95:
-#         list.append(randboxes[k])
-# list=np.array(list)
-# print(list)
-# print(np.shape(list))
-# newimage=Image.open('Dostoevsky_1879.jpg').convert('L')
-# newimage=np.asarray(newimage)
-# newimage=markImage(newimage, list)
-# plt.imshow(newimage)
-# plt.show()
-numboxes=50
-originalimage=Image.open('Dostoevsky_1879.jpg').convert('L')
-originalimage=np.asarray(originalimage)
-randboxes=potentialboxes(np.shape(originalimage), numboxes)
-for k in range(numboxes):
-    potentialface=split(originalimage, randboxes[k, 0], randboxes[k, 1], randboxes[k, 2], randboxes[k, 3])
+image=Image.open('IMG_9202.jpg').convert('L')
+image=np.array(image)
+boxes=slidingboxes(np.shape(image))
+correctboxes=[]
+for q in range(np.shape(boxes)[0]):
+    potentialface=split(image, boxes[q])
     potentialface=oldmodel.resize(potentialface)
     potentialface=torch.from_numpy(potentialface).type(torch.float32)
     guess=model.knas(potentialface)
     if torch.argmax(guess)==1:
-        label='guess: FACE!!!!!'
-        list.append(randboxes[k, :])
-    if torch.argmax(guess)==0:
-        label='guess: not face'
-    #plt.imshow(potentialface)
-    #plt.title(label)
-    #plt.show()
-print(list)
-list=np.array(list)
-print(list)
-newimage=Image.open('Dostoevsky_1879.jpg').convert('L')
-imagearray=np.asarray(newimage)
-marked=markImage(imagearray, list)
-plt.imshow(marked)
+        correctboxes.append(boxes[q])
+correctboxes=np.array(correctboxes)
+print(correctboxes)
+image=markImage(image, correctboxes)
+plt.imshow(image)
 plt.show()
